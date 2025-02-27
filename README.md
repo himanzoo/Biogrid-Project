@@ -24,4 +24,4 @@ tests = [
 
 ## Authors and acknowledgment
 I am Hira Manzoor and i am the author of my project. 
-I acknowledge Mr Christian and Mr Fabian for supporting me in this project.
+I acknowledge Mr. Christian and Mr. Fabian for supporting me in this project.
