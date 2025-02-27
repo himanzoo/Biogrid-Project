@@ -1,14 +1,16 @@
+import os.path
+
 import pandas as pd
 import pytest
-from sqlalchemy import create_engine
+from sqlalchemy import Engine, create_engine
 
 from biogrid.db.manager import Importer, Query
 from biogrid.db.models import Base, Interaction, Organism, Protein
 
-file_path = "tests/data/test_data.tsv"
+file_path = os.path.join("tests", "data", "test_data.tsv")
 connection_string = "sqlite:///biogrid.db"
 
-engine = create_engine(url=connection_string)
+engine: Engine = create_engine(url=connection_string)
 
 data = [
     {
@@ -116,7 +118,7 @@ def importer() -> Importer:
 
 @pytest.fixture
 def query() -> Query:
-    importer = Importer(engine=engine, file_path=file_path)
+    importer: Importer = Importer(engine=engine, file_path=file_path)
     importer.import_data()
     return Query(engine=engine)
 
@@ -131,24 +133,24 @@ class TestImporter:
 
     def test_load_data(self, importer: Importer):
         df_test = pd.DataFrame(data)
-        df = importer.load_data()
+        df: pd.DataFrame = importer.load_data()
         assert df.equals(df_test)
 
     def test_get_interaction_df(self, importer: Importer):
-        df = importer.load_data()
-        interaction_df = importer.get_interaction_df(df)
+        df: pd.DataFrame = importer.load_data()
+        interaction_df: pd.DataFrame = importer.get_interaction_df(df)
         interaction_df_test = pd.DataFrame(data_interactions)
         assert interaction_df.equals(interaction_df_test)
 
     def test_get_protein_df(self, importer: Importer):
         df = importer.load_data()
-        protein_df = importer.get_proteins_df(df)
+        protein_df: pd.DataFrame = importer.get_proteins_df(df)
         protein_df_test = pd.DataFrame(data_proteins)
         assert protein_df.equals(protein_df_test)
 
     def test_get_organism_df(self, importer: Importer):
         df: pd.DataFrame = importer.load_data()
-        organism_df = importer.get_organisms_df(df)
+        organism_df: pd.DataFrame = importer.get_organisms_df(df)
         organism_df_test = pd.DataFrame(data_organisms)
         assert organism_df.equals(organism_df_test)
 
