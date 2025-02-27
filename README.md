@@ -15,13 +15,16 @@ XX            |   XX             |    XXX                         |     XXX
 
 
 ## Dependencies:
+
 dependencies = ["pandas>=2.2.3", "sqlalchemy>=2.0.38"]
+
 requires-python = ">=3.12"
+
 tests = [
     "pytest>=8.3.4"
 ]
 
 
 ## Authors and acknowledgment
-I am Hira Manzoor and i am the author of my project. 
+I am Hira Manzoor and I am the author of my project.  
 I acknowledge Mr. Christian and Mr. Fabian for supporting me in this project.
