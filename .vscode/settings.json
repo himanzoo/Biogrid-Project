@@ -1,6 +1,8 @@
 {
     "cSpell.words": [
-        "sessionmaker"
+        "interactor",
+        "sessionmaker",
+        "uniprot"
     ],
     "python.testing.pytestArgs": [
         "tests"
