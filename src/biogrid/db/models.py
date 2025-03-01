@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, Float, String, ForeignKey
 from sqlalchemy.orm import DeclarativeBase, relationship, Mapped, mapped_column
 
 class Base(DeclarativeBase):
