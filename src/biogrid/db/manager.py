@@ -115,12 +115,44 @@ class Importer:
 
 
     def import_data(self)   -> None:
-       pass
+        """Import data into the database."""
+        df = self.load_data()
+        interaction_df = self.get_interaction_df(df)
+        protein_df = self.get_proteins_df(df)
+        organism_df = self.get_organisms_df(df)
+
+        with Session(self.engine) as session:
+            # Import organisms
+            for _, row in organism_df.iterrows():
+                organism = Organism(tax_id=row["tax_id"], name=row["name"])
+                session.merge(organism)
+
+            # Import proteins
+            for _, row in protein_df.iterrows():
+                protein = Protein(
+                uniprot_id=row["uniprot_id"],
+                symbol=row["symbol"],
+                tax_id=row["tax_id"]
+                )
+                session.merge(protein)
+
+            # Import interactions
+            for _, row in interaction_df.iterrows():
+                interaction = Interaction(
+                    id=row["id"],
+                    interactor_a_id=row["interactor_a_id"],
+                    interactor_b_id=row["interactor_b_id"],
+                    score=row["score"],
+                    experimental_system=row["experimental_system"],
+                    experimental_system_type=row["experimental_system_type"]
+                )
+                session.merge(interaction)
+
+            session.commit()
 
 
 
 
-    
 class Query:
     def __init__(self, engine: Engine)  -> None:
         self.engine = engine
