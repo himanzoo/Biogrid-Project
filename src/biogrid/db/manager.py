@@ -139,7 +139,7 @@ class Importer:
     
 
     def import_data(self) -> None:
-        """Import all test data into the database."""
+        """Import all test data from pd DataFrame into the database (biogrid.db)."""
         df: pd.DataFrame = self.load_data()
 
         # Extract data
