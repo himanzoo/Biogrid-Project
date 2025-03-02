@@ -8,27 +8,27 @@ from biogrid.db.models import Base, Interaction, Organism, Protein
 class Importer:
     """Represent importer class"""
 
-    def __init__(self, engine: Engine = create_engine("sqlite:///biogrid.db"), file_path: str = "/Users/hira/Desktop/biogrid/tests/data/test_data.tsv") -> None:
+    def __init__(self, engine: Engine = create_engine(url="sqlite:///biogrid.db"), file_path: str = "/Users/hira/Desktop/biogrid/tests/data/test_data.tsv") -> None:
         """initialize the importer class
 
         Args:
             engine (_str_): Defaults to create_engine("sqlite:///biogrid.db").
             path_test_data (_str_): Defaults to "/Users/hira/Desktop/biogrid/tests/data/test_data.tsv".
         """
-        self.engine = engine
-        self.file_path = file_path
-        self.Session = sessionmaker(self.engine)
+        self.engine: Engine = engine
+        self.file_path: str = file_path
+        self.Session = sessionmaker(bind=self.engine)
 
     
-    def _normalize_column_names(self, columns)   -> None:
+    def _normalize_column_names(self, columns: list[str])   -> None:
         """Normalize column names to lowercase and replace spaces with underscores."""
         return [col.lower().replace(" ", "_").replace("#", "").replace("-", "_") for col in columns]
 
 
     def load_data(self)   -> pd.DataFrame:
         """Load data from the TSV file and normalize column names."""
-        df = pd.read_csv(self.file_path, sep="\t")
-        df.columns = self._normalize_column_names(df.columns)
+        df: pd.DataFrame = pd.read_csv(filepath_or_buffer=self.file_path, sep="\t")
+        df.columns = self._normalize_column_names(columns=df.columns)
         return df
 
     def get_interaction_df(self, df: pd.DataFrame) -> pd.DataFrame:
@@ -43,11 +43,11 @@ class Importer:
             experimental_system, experimental_system_type.
         """
         # Create a DataFrame with the required columns for Interaction
-        interaction_df = pd.DataFrame({
+        interaction_df = pd.DataFrame(data={
             'id': df['biogrid_interaction_id'],
             'interactor_a_id': df['swiss_prot_accessions_interactor_a'],
             'interactor_b_id': df['swiss_prot_accessions_interactor_b'],
-            'score': df['score'].replace('-', None),
+            'score': df['score'].replace(to_replace='-', value=None),
             'experimental_system': df['experimental_system'],
             'experimental_system_type': df['experimental_system_type']
         })
@@ -58,7 +58,7 @@ class Importer:
         """Extract proteins data from the DataFrame."""
 
         #Extract proteins a
-        proteins_a = df[[
+        proteins_a: pd.DataFrame = df[[
             "swiss_prot_accessions_interactor_a", "official_symbol_interactor_a",
             "organism_id_interactor_a"
         ]].rename(columns={
@@ -68,7 +68,7 @@ class Importer:
         })
 
         # Extract proteins b
-        proteins_b = df[[
+        proteins_b: pd.DataFrame = df[[
             "swiss_prot_accessions_interactor_b", "official_symbol_interactor_b",
             "organism_id_interactor_b"
         ]].rename(columns={
@@ -78,7 +78,7 @@ class Importer:
         })
 
         # Combine all proteins and drop duplicates
-        return pd.concat([proteins_a, proteins_b]).drop_duplicates()
+        return pd.concat(objs=[proteins_a, proteins_b]).drop_duplicates()
 
     def get_organisms_df(self, df: pd.DataFrame)   -> pd.DataFrame:
         """Extract organisms from DataFrame.
@@ -91,8 +91,8 @@ class Importer:
         """
         
         # Extract unique organisms from the raw data
-        organisms_a = df[["organism_id_interactor_a", "organism_name_interactor_a"]]
-        organisms_b = df[["organism_id_interactor_b", "organism_name_interactor_b"]]
+        organisms_a: pd.DataFrame = df[["organism_id_interactor_a", "organism_name_interactor_a"]]
+        organisms_b: pd.DataFrame = df[["organism_id_interactor_b", "organism_name_interactor_b"]]
 
         # Rename columns to match the expected format
         organisms_a = organisms_a.rename(
@@ -109,23 +109,23 @@ class Importer:
         )
 
         # Combine and drop duplicates
-        organisms_df = pd.concat([organisms_a, organisms_b]).drop_duplicates().reset_index(drop=True)
+        organisms_df: pd.DataFrame = pd.concat(objs=[organisms_a, organisms_b]).drop_duplicates().reset_index(drop=True)
 
         return organisms_df
 
 
     def import_data(self)   -> None:
         """Import data into the database."""
-        df = self.load_data()
-        interaction_df = self.get_interaction_df(df)
-        protein_df = self.get_proteins_df(df)
-        organism_df = self.get_organisms_df(df)
+        df: pd.DataFrame = self.load_data()
+        interaction_df: pd.DataFrame = self.get_interaction_df(df)
+        protein_df: pd.DataFrame = self.get_proteins_df(df)
+        organism_df: pd.DataFrame = self.get_organisms_df(df)
 
-        with Session(self.engine) as session:
+        with Session(bind=self.engine) as session:
             # Import organisms
             for _, row in organism_df.iterrows():
                 organism = Organism(tax_id=row["tax_id"], name=row["name"])
-                session.merge(organism)
+                session.merge(instance=organism)
 
             # Import proteins
             for _, row in protein_df.iterrows():
@@ -134,7 +134,7 @@ class Importer:
                 symbol=row["symbol"],
                 tax_id=row["tax_id"]
                 )
-                session.merge(protein)
+                session.merge(instance=protein)
 
             # Import interactions
             for _, row in interaction_df.iterrows():
@@ -146,7 +146,7 @@ class Importer:
                     experimental_system=row["experimental_system"],
                     experimental_system_type=row["experimental_system_type"]
                 )
-                session.merge(interaction)
+                session.merge(instance=interaction)
 
             session.commit()
 
@@ -155,19 +155,19 @@ class Importer:
 
 class Query:
     def __init__(self, engine: Engine)  -> None:
-        self.engine = engine
+        self.engine: Engine = engine
 
     def count_proteins(self) -> int:
         """Count the number of proteins in the database."""
-        with Session(self.engine) as session:
-            return session.query(Protein).count()
+        with Session(bind=self.engine) as session:
+            return session.query(_entity=Protein).count()
 
     def count_organisms(self) -> int:
         """Count the number of organisms in the database."""
-        with Session(self.engine) as session:
-            return session.query(Organism).count()
+        with Session(bind=self.engine) as session:
+            return session.query(_entity=Organism).count()
 
     def count_interactions(self) -> int:
         """Count the number of interactions in the database."""
         with Session(self.engine) as session:
-            return session.query(Interaction).count()
+            return session.query(_entity=Interaction).count()
