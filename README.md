@@ -3,13 +3,13 @@
 
 
 ## Overview
-The aim of this project is to implement given tests ["pytest"] correctly on the classes. 
+The aim of this project is to load and filter the raw data from test_data.tsv file into pandas DataFrame by normalized the column names and filtering the columns. Then import data from pandas DataFrame to Database (biogrid.db). Therefore, the class importer and class query will correctly passed the given tests ["pytest"].  
 
 ## Data Format:
-Relational database management system (RDMS) in the table form (tsv file format):
+The given test data (raw data) is in the table form (tsv file format):
 This table contains rows and columns:
 
-BioGRID ID    |  Interaction ID  |   Entries Gene Interactor A    |    Entries Gene Interactor B
+Biogrid ID    |  Interaction ID  |   Entries Gene Interactor A    |    Entries Gene Interactor B
 ------        |   ------         |    -------                     |     -------
 XX            |   XX             |    XXX                         |     XXX
 
