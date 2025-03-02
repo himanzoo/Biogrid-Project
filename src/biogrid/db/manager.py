@@ -9,7 +9,7 @@ class Importer:
     """Represent importer class"""
 
     def __init__(self, engine: Engine = create_engine(url="sqlite:///biogrid.db"), file_path: str = "/Users/hira/Desktop/biogrid/tests/data/test_data.tsv") -> None:
-        """initialize the importer class
+        """initialize the importer class.
 
         Args:
             engine (_str_): Defaults to create_engine("sqlite:///biogrid.db").
@@ -187,7 +187,14 @@ class Importer:
         session.commit()
 
 class Query:
+    """Represent Query class.
+    """
     def __init__(self, engine: Engine)  -> None:
+        """initialize the class.
+
+        Args:
+            engine (Engine): _connection with the database_
+        """
         self.engine: Engine = engine
 
     def count_proteins(self) -> int:
