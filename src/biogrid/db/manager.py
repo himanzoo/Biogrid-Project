@@ -183,7 +183,7 @@ class Importer:
                 )
                 session.add(interaction)
 
-        # Commit the transaction
+        # Commit
         session.commit()
 
 class Query:
