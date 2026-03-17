@@ -9,6 +9,8 @@ The aim of this project is to load and filter the raw data from test_data.tsv fi
 The given test data (raw data) is in the table form (tsv file format):
 This table contains rows and columns:
 
+NOTE: I have made dummy data with the same data structure due to data protection and safety.
+
 Biogrid ID    |  Interaction ID  |   Entries Gene Interactor A    |    Entries Gene Interactor B
 ------        |   ------         |    -------                     |     -------
 XX            |   XX             |    XXX                         |     XXX
