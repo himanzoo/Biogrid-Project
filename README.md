@@ -3,7 +3,7 @@
 
 
 ## Overview
-The aim of this project is to load and filter the raw data from test_data.tsv file into pandas DataFrame by normalized the column names and filtering the columns. Then import data from pandas DataFrame to Database (biogrid.db). Therefore, the class importer and class query will correctly passed the given tests ["pytest"].  
+The aim of this project is to load and filter the raw data from test_data.tsv file into pandas DataFrame by normalized the column names and filtering the columns. Then import data from pandas DataFrame to Database (biogrid.db). Therefore, the class importer and class query will correctly passed the given tests ["pytest"]. The original data is COVID-19 data.
 
 ## Data Format:
 The given test data (raw data) is in the table form (tsv file format):
